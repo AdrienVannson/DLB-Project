@@ -31,6 +31,8 @@ class ProtoNet(MetaTemplate):
 
         scores = self.set_forward(x)
 
+        # scores.shape: (10, 2)
+        # y_query.shape: (10)
         return self.loss_fn(scores, y_query )
 
 
