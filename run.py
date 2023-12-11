@@ -121,8 +121,12 @@ def train(train_loader, val_loader, model, cfg):
         if epoch % cfg.exp.val_freq == 0 or epoch == cfg.method.stop_epoch - 1:
             model.eval()
             acc = model.test_loop(val_loader)
-            print(f"Epoch {epoch}: {acc:.2f}")
             wandb.log({'acc/val': acc})
+
+            acc_train = model.test_loop(train_loader)
+            wandb.log({'acc/train': acc_train})
+
+            print(f"Epoch {epoch}: train={acc_train:.2f} val={acc:.2f}")
 
             if acc > max_acc:
                 print("best model! save...")
