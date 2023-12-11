@@ -7,4 +7,7 @@ cls:
   layer_size: ???
   dropout: ???
 
+# The algorithm is fast to converge
+stop_epoch: 20
+
 name: relationnet
