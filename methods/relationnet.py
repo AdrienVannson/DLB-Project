@@ -8,14 +8,14 @@ from methods.meta_template import MetaTemplate
 
 
 class RelationNet(MetaTemplate):
-    def __init__(self, backbone, n_way, n_support):
+    def __init__(self, backbone, n_way, n_support, layer_size, dropout):
         super(RelationNet, self).__init__(backbone, n_way, n_support)
         self.loss_fn = nn.CrossEntropyLoss()
 
-        self.linear1 = nn.Linear(1024, 16, device=self.device).to(self.device)
-        self.linear2 = nn.Linear(16, 1, device=self.device).to(self.device)
+        self.linear1 = nn.Linear(1024, layer_size, device=self.device).to(self.device)
+        self.linear2 = nn.Linear(layer_size, 1, device=self.device).to(self.device)
         self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(p=0.2)
+        self.dropout = nn.Dropout(p=dropout)
 
     def set_forward(self, x, is_feature=False):
         z_support, z_query = self.parse_feature(x, is_feature)
