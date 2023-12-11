@@ -92,6 +92,11 @@ def train(train_loader, val_loader, model, cfg):
         os.makedirs(cp_dir)
     wandb.init(project=cfg.wandb.project, entity=cfg.wandb.entity, config=OmegaConf.to_container(cfg, resolve=True),
                group=cfg.exp.name, name = cfg.method.name, settings=wandb.Settings(start_method="thread"), mode=cfg.wandb.mode)
+
+    # Set the name of the run if possible
+    if cfg.run.name != 0:
+        wandb.run.name = cfg.run.name
+
     wandb.define_metric("*", step_metric="epoch")
 
     if cfg.exp.resume:
@@ -121,12 +126,8 @@ def train(train_loader, val_loader, model, cfg):
         if epoch % cfg.exp.val_freq == 0 or epoch == cfg.method.stop_epoch - 1:
             model.eval()
             acc = model.test_loop(val_loader)
+            print(f"Epoch {epoch}: val={acc:.2f}")
             wandb.log({'acc/val': acc})
-
-            acc_train = model.test_loop(train_loader)
-            wandb.log({'acc/train': acc_train})
-
-            print(f"Epoch {epoch}: train={acc_train:.2f} val={acc:.2f}")
 
             if acc > max_acc:
                 print("best model! save...")

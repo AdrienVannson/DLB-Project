@@ -16,6 +16,9 @@ exp:
   seed: 42
   val_freq: 1
 
+run:
+  name: 0 # If 0, no name is given. Otherwise, the name of the run
+
 optimizer: Adam
 lr: 0.001
 optimizer_cls:
