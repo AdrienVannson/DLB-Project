@@ -10,7 +10,8 @@ from methods.meta_template import MetaTemplate
 class RelationNet(MetaTemplate):
     def __init__(self, backbone, n_way, n_support, layers_size, dropout):
         super(RelationNet, self).__init__(backbone, n_way, n_support)
-        self.loss_fn = nn.CrossEntropyLoss()
+        #self.loss_fn = nn.CrossEntropyLoss()
+        self.loss_fn = nn.MSELoss()
 
         layers = []
         prev = 1024
@@ -21,7 +22,8 @@ class RelationNet(MetaTemplate):
             layers.append(nn.Dropout(p=dropout))
             prev = s
 
-        self.layers = nn.Sequential(*layers[:-2])
+        self.layers = nn.Sequential(*layers[:-2], nn.Sigmoid())
+        #self.layers = nn.Sequential(*layers[:-2])
 
     def set_forward(self, x, is_feature=False):
         z_support, z_query = self.parse_feature(x, is_feature)
@@ -41,8 +43,10 @@ class RelationNet(MetaTemplate):
 
         scores = self.set_forward(x)
 
-        return self.loss_fn(scores, y_query)
+        #return self.loss_fn(scores, y_query)
 
+        target = F.one_hot(y_query, num_classes=self.n_way).to(self.device).float()
+        return self.loss_fn(scores, target.to(self.device))
 
 def concatenate(x, y):
     # x: N x D
