@@ -8,7 +8,7 @@ from methods.meta_template import MetaTemplate
 
 
 class RelationNet(MetaTemplate):
-    def __init__(self, backbone, n_way, n_support, layers_size, dropout):
+    def __init__(self, backbone, n_way, n_support, layers_size, batch_norm, dropout):
         super(RelationNet, self).__init__(backbone, n_way, n_support)
         #self.loss_fn = nn.CrossEntropyLoss()
         self.loss_fn = nn.MSELoss()
@@ -16,14 +16,19 @@ class RelationNet(MetaTemplate):
         layers = []
         prev = 1024
 
-        for s in layers_size:
+        for i, s in enumerate(layers_size):
             layers.append(nn.Linear(prev, s).to(self.device))
-            layers.append(nn.ReLU())
-            layers.append(nn.Dropout(p=dropout))
+
+            if i != len(layers_size) - 1:
+                if batch_norm:
+                    layers.append(nn.BatchNorm1d(s))
+                layers.append(nn.ReLU())
+                layers.append(nn.Dropout(p=dropout))
             prev = s
 
-        self.layers = nn.Sequential(*layers[:-2], nn.Sigmoid())
-        #self.layers = nn.Sequential(*layers[:-2])
+        self.layers = nn.Sequential(*layers, nn.Sigmoid())
+
+        #self.layers = nn.Sequential(*layers)
 
     def set_forward(self, x, is_feature=False):
         z_support, z_query = self.parse_feature(x, is_feature)
@@ -34,7 +39,8 @@ class RelationNet(MetaTemplate):
 
         concatenated = concatenate(z_query, z_proto)
 
-        return self.layers(concatenated).squeeze(dim=2)
+        shape = concatenated.shape
+        return self.layers(concatenated.view(shape[0] * shape[1], shape[2])).squeeze(dim=1).view(shape[0], shape[1])
 
 
     def set_forward_loss(self, x):

@@ -6,6 +6,7 @@ cls:
 
   layers_size: ???
   dropout: ???
+  batch_norm: ??? # 0 to disable, 1 to enable
 
 # The algorithm is fast to converge
 stop_epoch: 30
