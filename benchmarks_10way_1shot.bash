@@ -1,0 +1,14 @@
+#!/bin/bash
+
+python run.py exp.name=10_way_1_shot_tm method=maml dataset=tabula_muris n_shot=1 n_way=10
+python run.py exp.name=10_way_1_shot_tm method=baseline dataset=tabula_muris n_shot=1 n_way=10
+python run.py exp.name=10_way_1_shot_tm method=baseline_pp dataset=tabula_muris n_shot=1 n_way=10
+python run.py exp.name=10_way_1_shot_tm method=matchingnet dataset=tabula_muris n_shot=1 n_way=10
+python run.py exp.name=10_way_1_shot_tm method=protonet dataset=tabula_muris n_shot=1 n_way=10
+
+
+python run.py exp.name=10_way_1_shot_sp method=maml dataset=swissprot n_shot=1 n_way=10
+python run.py exp.name=10_way_1_shot_sp method=baseline dataset=swissprot n_shot=1 n_way=10
+python run.py exp.name=10_way_1_shot_sp method=baseline_pp dataset=swissprot n_shot=1 n_way=10
+python run.py exp.name=10_way_1_shot_sp method=matchingnet dataset=swissprot n_shot=1 n_way=10
+python run.py exp.name=10_way_1_shot_sp method=protonet dataset=swissprot n_shot=1 n_way=10
